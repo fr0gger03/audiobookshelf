@@ -1,0 +1,2 @@
+# Keep SSL directory in git
+# Actual certificate files are generated on the production server
