@@ -6,20 +6,19 @@ This directory contains SSL certificate configuration for the AudioBookshelf dep
 
 ### Self-Signed Certificates
 - **Files**: `audiobookshelf.crt`, `audiobookshelf.key`
-- **Domains**: `rpi4.local`, `192.168.6.125`, `books.occasional-it.com`
+- **Domains**: Configure for your hostname, IP, and domain
 - **Used for**: Local network access
 - **Browser behavior**: Shows security warning (expected)
 
 ### Let's Encrypt Certificates
 - **Files**: `books-letsencrypt.crt`, `books-letsencrypt.key`
-- **Domain**: `books.occasional-it.com`
+- **Domain**: Your domain
 - **Used for**: Public internet access
 - **Browser behavior**: Trusted, no warnings
-- **Expires**: December 30, 2025
 
 ## Generating Self-Signed Certificates
 
-To generate new self-signed certificates on rpi4:
+To generate new self-signed certificates on your server:
 
 ```bash
 # Generate private key
@@ -31,13 +30,13 @@ openssl req -new -x509 -key ssl/audiobookshelf.key -out ssl/audiobookshelf.crt -
 
 ## Renewing Let's Encrypt Certificates
 
-Use the renewal script on rpi4:
+Use the renewal script on your server:
 ```bash
-/home/fr0gger03/renew-letsencrypt.sh
+~/audiobookshelf/renew-letsencrypt.sh
 ```
 
 ## File Permissions
-On production rpi4, ensure proper ownership:
+On production server, ensure proper ownership:
 ```bash
-sudo chown fr0gger03:fr0gger03 ssl/books-letsencrypt.*
+sudo chown $USER:$USER ssl/books-letsencrypt.*
 ```

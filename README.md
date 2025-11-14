@@ -129,14 +129,14 @@ openssl req -new -x509 -key audiobookshelf.key -out audiobookshelf.crt -days 365
 
 ### Renewing Let's Encrypt Certificates
 ```bash
-# Check expiration (runs on rpi4)
+# Check expiration
 ./renew-letsencrypt.sh
 
 # Manual renewal process:
 # 1. Run DNS challenge
-sudo certbot certonly --manual --preferred-challenges dns -d books.occasional-it.com
+sudo certbot certonly --manual --preferred-challenges dns -d your-domain.com
 
-# 2. Add DNS TXT record via WordPress.com
+# 2. Add DNS TXT record via your DNS provider
 # 3. Update certificates after successful renewal
 ./renew-letsencrypt.sh --update
 ```
@@ -218,8 +218,8 @@ docker exec audiobookshelf-nginx nginx -t
 ### Certificate Issues
 ```bash
 # Test HTTPS connectivity
-curl -k -I https://192.168.6.125:8443/
-curl -I https://books.occasional-it.com/
+curl -k -I https://your-server-ip:8443/
+curl -I https://your-domain.com/
 
 # Verify certificate details
 openssl x509 -in ssl/audiobookshelf.crt -text -noout
