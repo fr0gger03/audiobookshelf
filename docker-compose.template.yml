@@ -1,0 +1,54 @@
+
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-America/Toronto}
+      - PORT=80
+    volumes:
+      - ./data/config:/config
+      - ./data/metadata:/metadata
+      - ./data/audiobooks:/audiobooks
+      - ./data/podcasts:/podcasts
+    networks:
+      - audiobookshelf
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:80 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: audiobookshelf-nginx
+    restart: unless-stopped
+    ports:
+      - "${SERVER_IP}:${HTTP_PORT:-8080}:80"
+      - "${SERVER_IP}:${HTTPS_PORT:-8443}:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - audiobookshelf
+    depends_on:
+      audiobookshelf:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  audiobookshelf:
+    driver: bridge
+    name: audiobookshelf-network
+
+volumes:
+  config:
+  metadata:
+  audiobooks:
+  podcasts:

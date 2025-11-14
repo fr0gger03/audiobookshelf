@@ -2,12 +2,25 @@
 
 This repository contains the Docker Compose configuration and supporting files for deploying AudioBookshelf with an nginx reverse proxy and SSL/TLS certificates.
 
+## 🔒 Security Notice
+
+This repository contains **template files only**. Actual configuration files with IP addresses, domains, and SSL certificates are kept local and excluded from version control. See [SECURITY.md](SECURITY.md) for details.
+
 ## Quick Start
 
 ```bash
-# Clone or download this repository
+# Clone this repository
 git clone <repository-url>
 cd audiobookshelf
+
+# Setup environment configuration
+cp .env.example .env
+# Edit .env with your actual values (IP, domain, ports)
+
+# Create your configuration files from templates
+cp docker-compose.template.yml docker-compose.yml
+cp nginx.template.conf nginx.conf
+# Edit docker-compose.yml and nginx.conf with your actual configuration
 
 # Generate self-signed certificates for local use
 cd ssl
@@ -24,12 +37,14 @@ docker compose ps
 
 ## 🌐 Access URLs
 
+After configuration, you'll be able to access AudioBookshelf through:
+
 ### Production (with trusted Let's Encrypt certificate)
-- **`https://books.occasional-it.com`** - External access, no browser warnings
+- **`https://your-domain.com`** - External access, no browser warnings
 
 ### Local Network (with self-signed certificates)
-- **`https://rpi4.local:8443`** - Local hostname access
-- **`https://192.168.6.125:8443`** - Direct IP access
+- **`https://your-hostname.local:8443`** - Local hostname access
+- **`https://your-server-ip:8443`** - Direct IP access
 
 *Note: Self-signed certificates will show browser security warnings - this is expected and safe for local use.*
 
@@ -50,8 +65,8 @@ docker compose ps
 - **Container**: `audiobookshelf-nginx`
 - **Image**: `nginx:alpine`
 - **External Ports**: 
-  - `192.168.6.125:8080:80` (HTTP - redirects to HTTPS)
-  - `192.168.6.125:8443:443` (HTTPS)
+  - `YOUR_IP:8080:80` (HTTP - redirects to HTTPS)
+  - `YOUR_IP:8443:443` (HTTPS)
 - **Features**:
   - Dual certificate setup (Let's Encrypt + Self-signed)
   - WebSocket/Socket.IO support for real-time features
@@ -65,16 +80,14 @@ docker compose ps
 
 ### Self-Signed Certificates (Local)
 - **Files**: `ssl/audiobookshelf.crt`, `ssl/audiobookshelf.key`
-- **Domains**: `rpi4.local`, `192.168.6.125`, `books.occasional-it.com`
+- **Domains**: Configure for your hostname, IP, and domain
 - **Expires**: ~1 year from generation
-- **Used for**: Local network access (`rpi4.local:8443`, `192.168.6.125:8443`)
+- **Used for**: Local network access
 
 ### Let's Encrypt Certificates (Production)
 - **Files**: `ssl/books-letsencrypt.crt`, `ssl/books-letsencrypt.key`
-- **Domain**: `books.occasional-it.com`
-- **Expires**: December 30, 2025
-- **Used for**: Public internet access (`https://books.occasional-it.com`)
-- **Renewal**: Manual DNS challenge required
+- **Domain**: Your public domain
+- **Renewal**: Manual DNS challenge required (see renewal script)
 
 ## Configuration
 
@@ -159,9 +172,9 @@ docker exec audiobookshelf-nginx nginx -t
 - **External access**: Only nginx ports exposed to host
 
 ### Port Mapping
-- **Host**: `192.168.6.125:8080` → Container: `80` (HTTP)
-- **Host**: `192.168.6.125:8443` → Container: `443` (HTTPS)
-- **NAT**: External `443` → Internal `8443` (configured at firewall level)
+- **Host**: `YOUR_IP:8080` → Container: `80` (HTTP)
+- **Host**: `YOUR_IP:8443` → Container: `443` (HTTPS)
+- **NAT**: External `443` → Internal `8443` (configured at firewall level, if needed)
 
 ## 🔍 Health Checks
 
@@ -221,8 +234,8 @@ openssl x509 -in ssl/books-letsencrypt.crt -noout -dates
 # Fix data directory permissions
 sudo chown -R $(id -u):$(id -g) data/
 
-# Fix SSL certificate permissions (on rpi4)
-sudo chown fr0gger03:fr0gger03 ssl/books-letsencrypt.*
+# Fix SSL certificate permissions
+sudo chown $(id -u):$(id -g) ssl/books-letsencrypt.*
 ```
 
 ### Network Connectivity
@@ -234,8 +247,25 @@ docker exec audiobookshelf-nginx wget -qO- http://audiobookshelf:80
 sudo ss -tuln | grep ":8080\|:8443"
 ```
 
+## 📁 Repository Structure
+
+```
+audiobookshelf/
+├── .env.example              # Environment variable template
+├── .gitignore                # Excludes sensitive files
+├── docker-compose.template.yml  # Template with placeholders
+├── nginx.template.conf       # Template nginx config
+├── SECURITY.md               # Security setup instructions
+├── README.md                 # This file
+├── deploy-docker.sh          # Deployment script
+├── renew-letsencrypt.sh      # Certificate renewal script
+├── DOCKER_DEPLOYMENT.md      # Deployment documentation
+├── PRODUCTION_SETUP.md       # Production setup guide
+└── ssl/                      # SSL certificates (not tracked)
+```
+
+**Note**: Files `docker-compose.yml`, `nginx.conf`, `data/`, and `ssl/*.{crt,key}` are not tracked in Git for security reasons.
+
 ---
 
-**Production Status**: ✅ Active  
-**Let's Encrypt Certificate**: Expires December 30, 2025  
-**Last Updated**: October 1, 2025
+**Last Updated**: November 14, 2025

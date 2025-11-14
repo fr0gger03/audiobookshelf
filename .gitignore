@@ -1,0 +1,22 @@
+# Data directories with user content
+data/
+
+# SSL certificates and private keys
+ssl/*.crt
+ssl/*.key
+ssl/*.pem
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Secrets and credentials
+*.secret
+*.password
+
+# macOS
+.DS_Store
+
+# Installer files
+*.pkg
