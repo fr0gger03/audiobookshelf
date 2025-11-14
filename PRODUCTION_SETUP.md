@@ -7,18 +7,18 @@ This document summarizes the complete production AudioBookshelf deployment with 
 ## 🌐 Live Service URLs
 
 ### ✅ Production Access (Trusted Certificate)
-- **https://books.occasional-it.com** - No browser warnings, Let's Encrypt certificate
+- **https://your-domain.com** - No browser warnings, Let's Encrypt certificate
 
 ### ✅ Local Network Access (Self-signed)
-- **https://rpi4.local:8443** - Local hostname access
-- **https://192.168.6.125:8443** - Direct IP access
+- **https://your-hostname.local:8443** - Local hostname access
+- **https://your-server-ip:8443** - Direct IP access
 
 ## 🔧 Infrastructure
 
-### Raspberry Pi 4 Configuration
+### Server Configuration
 - **OS**: Debian GNU/Linux (ARM64)
-- **User**: fr0gger03
-- **IP**: 192.168.6.125
+- **User**: your-username
+- **IP**: your-server-ip
 - **NAT**: External 443 → Internal 8443 (firewall configured)
 
 ### Docker Setup
@@ -30,16 +30,14 @@ This document summarizes the complete production AudioBookshelf deployment with 
 ## 📜 SSL Certificate Details
 
 ### Let's Encrypt Certificate
-- **Domain**: books.occasional-it.com
-- **Issuer**: Let's Encrypt (E8)
-- **Valid Until**: December 30, 2025
-- **Challenge**: Manual DNS (WordPress.com)
-- **Files**: `/home/fr0gger03/audiobookshelf/ssl/books-letsencrypt.{crt,key}`
+- **Domain**: your-domain.com
+- **Issuer**: Let's Encrypt
+- **Challenge**: Manual DNS (via your DNS provider)
+- **Files**: `~/audiobookshelf/ssl/books-letsencrypt.{crt,key}`
 
 ### Self-Signed Certificate
-- **Domains**: rpi4.local, 192.168.6.125, books.occasional-it.com
-- **Valid Until**: ~September 2026
-- **Files**: `/home/fr0gger03/audiobookshelf/ssl/audiobookshelf.{crt,key}`
+- **Domains**: your-hostname.local, your-server-ip, your-domain.com
+- **Files**: `~/audiobookshelf/ssl/audiobookshelf.{crt,key}`
 
 ## 🐳 Container Status
 
@@ -65,17 +63,17 @@ This document summarizes the complete production AudioBookshelf deployment with 
 
 ## 🔄 Maintenance
 
-### Certificate Renewal (Before Dec 30, 2025)
+### Certificate Renewal
 ```bash
-# On rpi4 as fr0gger03
-sudo certbot certonly --manual --preferred-challenges dns -d books.occasional-it.com
-# Add DNS TXT record via WordPress.com
+# On your server
+sudo certbot certonly --manual --preferred-challenges dns -d your-domain.com
+# Add DNS TXT record via your DNS provider
 ./renew-letsencrypt.sh --update
 ```
 
 ### Container Updates
 ```bash
-cd /home/fr0gger03/audiobookshelf
+cd ~/audiobookshelf
 docker compose pull
 docker compose up -d
 ```
@@ -89,13 +87,13 @@ docker compose ps
 docker compose logs -f
 
 # Test connectivity
-curl -I https://books.occasional-it.com/
+curl -I https://your-domain.com/
 ```
 
-## 📁 File Structure (on rpi4)
+## 📁 File Structure (on server)
 
 ```
-/home/fr0gger03/audiobookshelf/
+~/audiobookshelf/
 ├── docker-compose.yml          # Final configuration
 ├── nginx.conf                  # Dual certificate setup
 ├── renew-letsencrypt.sh        # Certificate renewal helper

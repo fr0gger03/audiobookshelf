@@ -1,6 +1,6 @@
 # AudioBookShelf Docker Compose Deployment
 
-This directory contains a Docker Compose setup for AudioBookShelf with NGINX reverse proxy, optimized for single-node deployment on rpi4.
+This directory contains a Docker Compose setup for AudioBookShelf with NGINX reverse proxy, optimized for single-node deployment.
 
 ## 🗂️ File Structure
 
@@ -19,9 +19,9 @@ audiobookshelf/
 
 ## 🚀 Deployment Steps
 
-### 1. Prerequisites on rpi4
+### 1. Prerequisites on Target Server
 
-Run these commands manually on rpi4:
+Run these commands manually on your server:
 
 ```bash
 # Remove k3s agent
@@ -40,7 +40,7 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Configure Docker
-sudo usermod -aG docker fr0gger03
+sudo usermod -aG docker $USER
 sudo systemctl enable docker
 sudo systemctl start docker
 
@@ -49,16 +49,16 @@ docker --version
 docker compose version
 ```
 
-### 2. Deploy AudioBookShelf
+### 2. Deploy AudioBookshelf
 
-Copy the files to rpi4 and run:
+Copy the files to your server and run:
 
 ```bash
-# Copy files to rpi4
-scp -r ./* fr0gger03@10.10.10.13:~/audiobookshelf/
+# Copy files to server
+scp -r ./* user@your-server-ip:~/audiobookshelf/
 
-# SSH to rpi4 and deploy
-ssh fr0gger03@10.10.10.13
+# SSH to server and deploy
+ssh user@your-server-ip
 cd ~/audiobookshelf
 ./deploy-docker.sh
 ```
@@ -90,11 +90,11 @@ cd ~/audiobookshelf
 
 ## 🌐 Access Points
 
-After deployment, AudioBookShelf will be available at:
+After deployment, AudioBookshelf will be available at:
 
-- **Primary**: http://10.10.10.13 (rpi4 IP)
-- **Local**: http://rpi4.local (if mDNS works)
-- **Health Check**: http://10.10.10.13/health
+- **Primary**: http://your-server-ip
+- **Local**: http://your-hostname.local (if mDNS works)
+- **Health Check**: http://your-server-ip/health
 
 ## 🔧 Management Commands
 

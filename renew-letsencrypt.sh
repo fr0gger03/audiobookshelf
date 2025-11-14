@@ -3,8 +3,8 @@
 # AudioBookshelf Let's Encrypt Certificate Renewal Script
 # This script handles manual renewal of Let's Encrypt certificates
 
-DOMAIN="books.occasional-it.com"
-AUDIOBOOKSHELF_DIR="/home/fr0gger03/audiobookshelf"
+DOMAIN="your-domain.com"
+AUDIOBOOKSHELF_DIR="$HOME/audiobookshelf"
 SSL_DIR="$AUDIOBOOKSHELF_DIR/ssl"
 
 echo "=== AudioBookshelf Let's Encrypt Renewal Script ==="
@@ -29,7 +29,7 @@ if [ "$1" = "--update" ]; then
     # Copy new certificates
     sudo cp /etc/letsencrypt/live/$DOMAIN/fullchain.pem "$SSL_DIR/books-letsencrypt.crt"
     sudo cp /etc/letsencrypt/live/$DOMAIN/privkey.pem "$SSL_DIR/books-letsencrypt.key"
-    sudo chown fr0gger03:fr0gger03 "$SSL_DIR/books-letsencrypt.crt" "$SSL_DIR/books-letsencrypt.key"
+    sudo chown $USER:$USER "$SSL_DIR/books-letsencrypt.crt" "$SSL_DIR/books-letsencrypt.key"
     
     # Restart nginx container to pick up new certificates
     cd "$AUDIOBOOKSHELF_DIR"

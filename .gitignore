@@ -15,6 +15,9 @@ ssl/*.pem
 *.secret
 *.password
 
+# Local configuration backups with sensitive data
+.local-config-backup/
+
 # macOS
 .DS_Store
 
